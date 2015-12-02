@@ -1,0 +1,14 @@
+{
+  "name": "chromeDataLogger",
+  "description": "A test application communicating through serial ports",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["scripts/jquery-1.11.3.js","background.js"],    
+	  "persistent": false
+    }
+  },
+  "icons": { "16": "calculator-16.png", "128": "calculator-128.png" },
+  "permissions":["serial"]
+}
