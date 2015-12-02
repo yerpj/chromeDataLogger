@@ -3,6 +3,18 @@ var butCOMList=[];
 var COMLog;
 var butCloseCOM;
 var COMGetDevicesID;
+var openedCOMID;
+var x="";
+/*COMRxCB
+*/
+var COMRxCB=function(b)
+{
+	var data="";
+	new Uint8Array(b.data).forEach(function(i){data+=String.fromCharCode(i);});
+	//console.log("received :"+data);
+	COMLog.value+=data;
+	data="";
+}
 
 /*butCloseCOMcb
 */
@@ -12,11 +24,24 @@ var butCloseCOMcb=function(){
 	butCOMList.forEach(function(i){
 		$('#'+i+'').attr('disabled',false);		
 	});
+	
+	//close open COM
+	if(openedCOMID){
+		chrome.serial.disconnect(openedCOMID,function(res){
+			chrome.serial.onReceive.removeListener(COMRxCB);
+			//console.log(res)
+		});
+		openedCOMID=false;
+	}
+	
 	//remove COMLog and CLOSE button
 	$('#COMLog').remove();
 	COMLog=false;
 	$("#butCloseCOM").remove();
 	butCloseCOM=false;
+	
+	//restart the polling on COM ports
+	COMGetDevicesID=setInterval(function(){chrome.serial.getDevices(onGetDevices);},2000);
 }
 
 /*butCOMcb
@@ -29,11 +54,12 @@ var butCOMcb=function(a){
 	}
 	
 	//debug info
-	console.log("Button "+a.getAttribute("value")+" pressed");
+	//console.log("Button "+a.getAttribute("value")+" pressed");
 	
 	//creating COM log window, if not existing
 	if($('#COMLog').length){
-		//COMLog exists
+		//clear COMLog content
+		COMLog.value="";
 	}
 	else{
 		//create COMLog
@@ -59,6 +85,13 @@ var butCOMcb=function(a){
 		if(i!=a.getAttribute("id")){
 			$('#'+i+'').attr('disabled',true);	
 		}			
+	});
+	
+	//time to open COM port 
+	chrome.serial.connect(a.getAttribute("value"),{bitrate:115200},function(info){
+		openedCOMID=info.connectionId;
+		console.log("id :"+info.connectionId);
+		chrome.serial.onReceive.addListener(COMRxCB);
 	});
 }
 
