@@ -12,6 +12,11 @@ var butCloseCOMcb=function(){
 	butCOMList.forEach(function(i){
 		$('#'+i+'').attr('disabled',false);		
 	});
+	//remove COMLog and CLOSE button
+	$('#COMLog').remove();
+	COMLog=false;
+	$("#butCloseCOM").remove();
+	butCloseCOM=false;
 }
 
 /*butCOMcb
@@ -37,6 +42,7 @@ var butCOMcb=function(a){
 		COMLog.setAttribute('rows',"10");
 		COMLog.setAttribute('cols',"50");
 		COMLog.setAttribute('onclick',butCloseCOMcb);
+		COMLog.value='binded to '+a.getAttribute("value");
 		$('#endOfTextArea').append(COMLog);
 		
 		//create a button to close the COM port
