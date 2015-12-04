@@ -44,6 +44,7 @@ var butCloseCOMcb=function(){
 	COMGetDevicesID=setInterval(function(){chrome.serial.getDevices(onGetDevices);},2000);
 }
 
+
 /*butCOMcb
 */
 var butCOMcb=function(a){
